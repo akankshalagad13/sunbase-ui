@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer List</title>
+    <style>
+        /* Add some CSS to style the horizontal line */
+        tr.separator {
+            border-bottom: 1px solid #000;
+        }
+
+        td.actions {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Customer List</h1>
+    <button type="button" onclick="getCustomerList()">Get Customer List</button>
+    <table id="customerTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Street</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="customerData"></tbody>
+    </table>
+
+    <script>
+        async function getCustomerList() {
+            try {
+                const token = 'dGVzdEBzdW5iYXNlZGF0YS5jb206VGVzdEAxMjM='; // Replace with your actual token
+
+                const response = await fetch('sunbase-backend-production.up.railway.app/customer/list', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                if (response.status === 200) {
+                    const data = await response.json();
+                    displayCustomers(data);
+                } else {
+                    alert('Failed to retrieve customer list.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while fetching customer list.');
+            }
+        }
+
+        function displayCustomers(customers) {
+            const customerTable = document.getElementById('customerTable');
+            const customerData = document.getElementById('customerData');
+            customerData.innerHTML = ''; // Clear previous data
+
+            for (const customer of customers) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.first_name}</td>
+                    <td>${customer.last_name}</td>
+                    <td>${customer.street}</td>
+                    <td>${customer.address}</td>
+                    <td>${customer.city}</td>
+                    <td>${customer.state}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone}</td>
+                    <td class="actions">
+                        <button onclick="editCustomer(${customer.id})">Edit</button>
+                        <button onclick="deleteCustomer(${customer.id})">Delete</button>
+                    </td>
+                `;
+                customerData.appendChild(row);
+
+                // Add a separator line after each row
+                const separator = document.createElement('tr');
+                separator.className = 'separator';
+                customerData.appendChild(separator);
+            }
+
+            customerTable.style.display = 'table';
+        }
+
+        function editCustomer(customerId) {
+            // Implement the edit action here, e.g., open a modal for editing the customer.
+            alert(`Edit Customer with ID: ${customerId}`);
+        }
+
+        function deleteCustomer(customerId) {
+            // Implement the delete action here, e.g., send a DELETE request to delete the customer.
+            alert(`Delete Customer with ID: ${customerId}`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <div>
+            <label for="login_id">Email:</label>
+            <input type="text" id="login_id" name="loginId" placeholder="Enter your email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <div>
+            <button type="button" onclick="login()">Login</button>
+        </div>
+    </form>
+    <div id="tokenInfo" style="display: none;">
+        <h2>Token:</h2>
+        <p id="token"></p>
+        <button type="button" onclick="copyToken('token')">Copy Token</button>
+    </div>
+
+    <script>
+        async function login() {
+            const loginId = document.getElementById('login_id').value;
+            const password = document.getElementById('password').value;
+            const requestBody = {
+                login_id: loginId,
+                password: password
+            };
+
+            try {
+                const response = await fetch('sunbase-backend-production.up.railway.app/admin/authe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.status === 200) {
+                    const data = await response.json();
+                    document.getElementById('token').textContent = data.token;
+                    document.getElementById('tokenInfo').style.display = 'block';
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred during login.');
+            }
+        }
+
+        function copyToken(elementId) {
+            const token = document.getElementById(elementId);
+            const tempInput = document.createElement('input');
+            tempInput.value = token.textContent;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Token copied to the clipboard');
+        }
+    </script>
+</body>
+</html>

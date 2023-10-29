@@ -1,0 +1,92 @@
+\<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Customer</title>
+</head>
+<body>
+    <h1>Add Customer</h1>
+    <button type="button" onclick="toggleForm()">Show Form</button>
+    <button type="button" onclick="saveCustomer()">Save Customer</button>
+    <div id="successMessage" style="display: none; color: green;">
+        Customer created successfully.
+    </div>
+
+    <form id="customerForm" style="display: none;">
+        <div>
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Enter first name" required>
+        </div>
+        <div>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Enter last name" required>
+        </div>
+        <div>
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" placeholder="Enter street">
+        </div>
+        <div>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" placeholder="Enter address">
+        </div>
+        <div>
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" placeholder="Enter city">
+        </div>
+        <div>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" placeholder="Enter state" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" placeholder="Enter email">
+        </div>
+        <div>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" placeholder="Enter phone">
+        </div>
+    </form>
+
+    <script>
+        function toggleForm() {
+            const customerForm = document.getElementById('customerForm');
+            customerForm.style.display = customerForm.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function saveCustomer() {
+            const token = 'dGVzdEBzdW5iYXNlZGF0YS5jb206VGVzdEAxMjM=';
+
+            const customerData = {
+                "id": "1000",
+                "first_name": document.getElementById('first_name').value,
+                "last_name": document.getElementById('last_name').value,
+                "street": document.getElementById('street').value,
+                "address": document.getElementById('address').value,
+                "city": document.getElementById('city').value,
+                "state": document.getElementById('state').value,
+                "email": document.getElementById('email').value,
+                "phone": document.getElementById('phone').value
+            };
+
+            try {
+                const response = await fetch('sunbase-backend-production.up.railway.app/customer/save', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(customerData)
+                });
+
+                if (response.status === 200) {
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    alert('Failed to save customer data.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while saving customer data.');
+            }
+        }
+    </script>
+</body>
+</html>
